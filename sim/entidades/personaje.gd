@@ -14,6 +14,8 @@ signal paso_iniciado(desde: Vector2i, hacia: Vector2i, duracion: float)
 var velocidad: float = 4.0
 var casilla: Vector2i
 var paso_desde: Vector2i
+## Opcional: (casilla, personaje) -> bool, true si otra criatura la ocupa. Lo asigna `Mundo`.
+var esta_ocupada := Callable()
 
 var _mapa: Mapa
 var _buscador: BuscadorCamino
@@ -45,9 +47,27 @@ func fijar_direccion(direccion: Vector2i) -> void:
 		_ruta.clear()
 
 
+## Recorrer una ruta ya calculada (p. ej. acercarse a un objetivo).
+func seguir_ruta(ruta: Array[Vector2i]) -> void:
+	_ruta = ruta.duplicate()
+
+
+func cancelar_ruta() -> void:
+	_ruta.clear()
+
+
 func detener() -> void:
 	_ruta.clear()
 	_direccion = Vector2i.ZERO
+
+
+## Aparecer en otra casilla sin caminar (reaparición).
+func teletransportar(c: Vector2i) -> void:
+	detener()
+	casilla = c
+	paso_desde = c
+	_paso_restante = 0.0
+	_paso_duracion = 0.0
 
 
 func esta_caminando() -> bool:
@@ -86,7 +106,7 @@ func _iniciar_siguiente_paso() -> bool:
 	if _direccion != Vector2i.ZERO:
 		hacia = _paso_de_teclado(_direccion)
 	elif not _ruta.is_empty():
-		if _mapa.puede_moverse(casilla, _ruta[0]):
+		if _puede_pisar(_ruta[0]):
 			hacia = _ruta.pop_front()
 		else:
 			_ruta.clear() # algo bloqueó el camino; se vuelve a pedir con otro clic
@@ -111,6 +131,12 @@ func _paso_de_teclado(direccion: Vector2i) -> Variant:
 		candidatos.append(Vector2i(direccion.x, 0))
 		candidatos.append(Vector2i(0, direccion.y))
 	for d in candidatos:
-		if _mapa.puede_moverse(casilla, casilla + d):
+		if _puede_pisar(casilla + d):
 			return casilla + d
 	return null
+
+
+func _puede_pisar(destino: Vector2i) -> bool:
+	if not _mapa.puede_moverse(casilla, destino):
+		return false
+	return not (esta_ocupada.is_valid() and esta_ocupada.call(destino, self))

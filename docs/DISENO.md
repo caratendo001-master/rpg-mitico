@@ -127,10 +127,10 @@ Terminado cuando: el proyecto abre en Godot, corre una escena vacía y las prueb
 Terminado cuando: puedes recorrer el mapa sin atravesar paredes ni ver errores de orden visual.
 
 ### Fase 2 — Combate y enemigos
-- [ ] Sistema de ticks, atributos, vida y maná en la simulación.
-- [ ] Ataque cuerpo a cuerpo y a distancia con tiradas d20.
-- [ ] Primer enemigo con máquina de estados (patrullar, perseguir, atacar).
-- [ ] Barra de vida, números de daño y muerte con reaparición.
+- [x] Sistema de ticks, atributos, vida y maná en la simulación.
+- [x] Ataque cuerpo a cuerpo y a distancia con tiradas d20.
+- [x] Primer enemigo con máquina de estados (patrullar, perseguir, atacar).
+- [x] Barra de vida, números de daño y muerte con reaparición.
 
 Terminado cuando: pelear contra 3 ratas es justo y entendible.
 

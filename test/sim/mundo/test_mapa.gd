@@ -85,6 +85,28 @@ func test_mapa_de_prueba_cerrado_y_conectado() -> void:
 	assert_bool(_hay_camino(mapa, Vector2i(1, 1), Vector2i(18, 12))).is_true()
 
 
+func test_marcas_en_minuscula_son_suelo() -> void:
+	var mapa := Mapa.desde_texto("#####\n#r.r#\n#####")
+	assert_array(mapa.marcas["r"]).contains_exactly([Vector2i(1, 1), Vector2i(3, 1)])
+	assert_bool(mapa.es_transitable(Vector2i(1, 1))).is_true()
+
+
+func test_linea_de_vision() -> void:
+	var mapa := Mapa.desde_texto(SALA) # columna en (2,2)
+	assert_bool(mapa.linea_de_vision(Vector2i(1, 1), Vector2i(3, 1))).is_true()
+	assert_bool(mapa.linea_de_vision(Vector2i(1, 2), Vector2i(3, 2))).is_false()
+	assert_bool(mapa.linea_de_vision(Vector2i(1, 1), Vector2i(3, 3))).is_false()
+	# Los extremos no cuentan: se puede "ver" un muro.
+	assert_bool(mapa.linea_de_vision(Vector2i(1, 1), Vector2i(0, 1))).is_true()
+
+
+func test_linea_incluye_extremos() -> void:
+	assert_array(Mapa.linea(Vector2i(0, 0), Vector2i(3, 0))) \
+		.is_equal([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0)])
+	assert_array(Mapa.linea(Vector2i(2, 2), Vector2i(0, 0))) \
+		.is_equal([Vector2i(2, 2), Vector2i(1, 1), Vector2i(0, 0)])
+
+
 func _hay_camino(mapa: Mapa, inicio: Vector2i, meta: Vector2i) -> bool:
 	var visitadas := {inicio: true}
 	var cola: Array[Vector2i] = [inicio]

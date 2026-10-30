@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="FichaCriatura" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://sim/combate/ficha_criatura.gd" id="1_ficha"]
+[ext_resource type="Resource" path="res://data/armas/mordida_rata.tres" id="2_mordida"]
+
+[resource]
+script = ExtResource("1_ficha")
+nombre = "Rata gigante"
+fuerza = 8
+destreza = 12
+constitucion = 10
+inteligencia = 2
+sabiduria = 10
+vida_base = 11
+mana_base = 0
+defensa_base = 10
+regen_vida = 0
+arma = ExtResource("2_mordida")
+velocidad = 3.0
+color = Color(0.48, 0.4, 0.33, 1)
+tamano = 0.55

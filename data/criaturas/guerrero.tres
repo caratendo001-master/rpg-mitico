@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="FichaCriatura" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://sim/combate/ficha_criatura.gd" id="1_ficha"]
+[ext_resource type="Resource" path="res://data/armas/espada.tres" id="2_espada"]
+
+[resource]
+script = ExtResource("1_ficha")
+nombre = "Guerrero"
+fuerza = 14
+destreza = 12
+constitucion = 14
+inteligencia = 8
+sabiduria = 10
+vida_base = 30
+mana_base = 10
+defensa_base = 12
+regen_vida = 1
+arma = ExtResource("2_espada")
+velocidad = 4.0
+color = Color(0.247, 0.435, 0.71, 1)
+tamano = 1.0

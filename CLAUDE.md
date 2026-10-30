@@ -69,7 +69,8 @@ Consecuencias prácticas:
 - `sim/mundo/mapa.gd` (`Mapa`): cuadrícula lógica y **fuente de verdad de las colisiones**.
   Solo el suelo es transitable; pasos de 1 casilla en 8 direcciones, sin cortar esquinas en diagonal
   (`puede_moverse`). Todo movimiento futuro (jugador, enemigos, A*) debe pasar por aquí.
-- Los mapas son texto en `data/mapas/*.txt`: `.` suelo, `#` muro, `O` columna, espacio = vacío.
+- Los mapas son texto en `data/mapas/*.txt`: `.` suelo, `#` muro, `O` columna, espacio = vacío,
+  `J` inicio del jugador, minúsculas = marcas sobre suelo (`r` = rata).
   Al exportar, agregar `*.txt` a los filtros de recursos no-Godot del preset de exportación.
 - `sim/mundo/buscador_camino.gd` (`BuscadorCamino`): A* (`AStarGrid2D`) con las mismas reglas que
   `Mapa.puede_moverse`; si el destino está bloqueado, llega lo más cerca posible.
@@ -79,13 +80,32 @@ Consecuencias prácticas:
 - `view/mundo/mapa_vista.tscn` (`MapaVista`): dibuja el `Mapa` con `Suelo` y, dentro del nodo `Mundo`
   (y-sort), la capa `Bloques`. Todo lo que deba ordenarse en profundidad con muros y columnas
   (personajes, objetos) se agrega con `agregar_al_mundo()` con su origen en los pies.
-- `view/entidades/personaje_vista.gd`: placeholder del personaje + contorno con `z_index` alto
-  para verlo cuando un muro lo tapa. `view/camara_juego.gd`: sigue al jugador, zoom por pasos.
-- `view/main.gd`: traduce entrada (clic, WASD/flechas en direcciones de pantalla) a acciones del `Personaje`.
+- `view/camara_juego.gd`: sigue al jugador, zoom por pasos.
+- `view/main.gd`: traduce entrada (clic en suelo = caminar, clic en enemigo = atacar, WASD/flechas en
+  direcciones de pantalla, 1/2 = arma, Esc = soltar objetivo) a acciones de la simulación.
 - `view/mundo/tiles_placeholder.gd`: TileSet isométrico 64×32 con texturas generadas por código;
   se reemplazará por pixel art real con las mismas fuentes/coordenadas de atlas.
+
+## Combate y criaturas
+
+- `sim/mundo/mundo.gd` (`Mundo`): la partida entera. `avanzar(segundos)` mueve todo; cada
+  `DURACION_TICK` (1 s) llama `tick()`: cada criatura piensa (IA), regenera y ataca una vez a su
+  objetivo si está a su alcance. Crea criaturas con `crear_jugador` / `crear_enemigo` / `poblar(símbolo)`.
+  Evita que dos criaturas compartan casilla. Muertos reaparecen en su origen (jugador 3 ticks, enemigos 30).
+- `sim/entidades/criatura.gd` (`Criatura`): `Personaje` + `Combatiente` + `IaCriatura` opcional.
+  `objetivo` es referencia débil (evita ciclos de memoria). Las Callables de la simulación deben ser
+  métodos, no lambdas que capturen criaturas.
+- `sim/combate/`: `FichaCriatura` y `FichaArma` (Resources en `data/criaturas/` y `data/armas/`),
+  `Combatiente` (vida/maná/defensa derivados de atributos D&D) y `Combate.resolver` (d20 + mod vs defensa;
+  20 = crítico con dados dobles; 1 = fallo).
+- `sim/entidades/ia_criatura.gd`: PATRULLAR → PERSEGUIR → ATACAR → REGRESAR (correa), con vista + línea de vista.
+- Equilibrio: `test_equilibrio_guerrero_contra_tres_ratas` simula 60 peleas; hoy ≈90% victorias
+  perdiendo ≈13/34 de vida. Si se tocan fichas, revisar que siga en rango.
+- Vista: `view/entidades/criatura_vista.gd` (barra de vida, números de daño, anillo de objetivo, muerte)
+  y `ui/hud.gd` (vida, maná, arma, aviso de muerte).
 
 ## Estado
 
 - Fase 0 (cimientos): completa.
-- Fase 1 (mundo y movimiento): completa, pendiente de que el usuario la pruebe jugando.
+- Fase 1 (mundo y movimiento): completa y probada por el usuario.
+- Fase 2 (combate y enemigos): completa, pendiente de que el usuario la pruebe jugando.

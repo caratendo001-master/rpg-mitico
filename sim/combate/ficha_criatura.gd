@@ -1,0 +1,34 @@
+class_name FichaCriatura
+extends Resource
+## Datos base de una criatura o del jugador. Se guarda en data/criaturas/*.tres
+## para balancear sin tocar código.
+
+@export var nombre := "Criatura"
+
+@export_group("Atributos")
+@export var fuerza := 10
+@export var destreza := 10
+@export var constitucion := 10
+@export var inteligencia := 10
+@export var sabiduria := 10
+
+@export_group("Combate")
+@export var vida_base := 10
+@export var mana_base := 0
+@export var defensa_base := 10
+## Vida que recupera en cada tick.
+@export var regen_vida := 0
+@export var arma: FichaArma
+
+@export_group("Movimiento")
+## Casillas por segundo.
+@export var velocidad := 4.0
+
+@export_group("Vista")
+@export var color := Color.WHITE
+@export var tamano := 1.0
+
+
+## Modificador estilo D&D: 10-11 → 0, 12-13 → +1, 8-9 → -1...
+static func modificador(valor: int) -> int:
+	return floori((valor - 10) / 2.0)

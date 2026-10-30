@@ -5,6 +5,7 @@ extends RefCounted
 ## Formato de texto (una fila por línea):
 ##   '.' suelo   '#' muro   'O' columna   ' ' vacío (fuera del mapa jugable)
 ##   'J' suelo donde aparece el jugador
+##   minúsculas: suelo con una marca (p. ej. 'r' = aparece una rata); ver `marcas`
 
 enum Tipo { VACIO, SUELO, MURO, COLUMNA }
 
@@ -26,6 +27,8 @@ var ancho: int = 0
 var alto: int = 0
 ## Casilla donde aparece el jugador; (-1, -1) si el mapa no la define.
 var inicio := Vector2i(-1, -1)
+## Símbolo en minúscula → casillas donde aparece (Array[Vector2i]).
+var marcas := {}
 var _casillas := PackedByteArray()
 
 
@@ -52,10 +55,17 @@ static func desde_texto(texto: String) -> Mapa:
 		var fila := filas[y]
 		for x in fila.length():
 			var simbolo := fila[x]
+			var c := Vector2i(x, y)
+			if simbolo >= "a" and simbolo <= "z":
+				mapa.poner(c, Tipo.SUELO)
+				if not mapa.marcas.has(simbolo):
+					mapa.marcas[simbolo] = [] as Array[Vector2i]
+				mapa.marcas[simbolo].append(c)
+				continue
 			assert(SIMBOLOS.has(simbolo), "Símbolo de mapa desconocido: '%s'" % simbolo)
-			mapa.poner(Vector2i(x, y), SIMBOLOS.get(simbolo, Tipo.VACIO))
+			mapa.poner(c, SIMBOLOS.get(simbolo, Tipo.VACIO))
 			if simbolo == SIMBOLO_INICIO:
-				mapa.inicio = Vector2i(x, y)
+				mapa.inicio = c
 	return mapa
 
 
@@ -105,6 +115,42 @@ func vecinos_alcanzables(c: Vector2i) -> Array[Vector2i]:
 		if puede_moverse(c, c + d):
 			vecinos.append(c + d)
 	return vecinos
+
+
+## Muros y columnas tapan la vista; el suelo y el vacío no.
+func bloquea_vision(c: Vector2i) -> bool:
+	var tipo := tipo_en(c)
+	return tipo == Tipo.MURO or tipo == Tipo.COLUMNA
+
+
+## Hay línea de vista si ninguna casilla entre `a` y `b` (sin contarlas) bloquea la vista.
+func linea_de_vision(a: Vector2i, b: Vector2i) -> bool:
+	var linea := Mapa.linea(a, b)
+	for i in range(1, linea.size() - 1):
+		if bloquea_vision(linea[i]):
+			return false
+	return true
+
+
+## Casillas de una línea recta de `a` a `b` (Bresenham), incluyendo ambos extremos.
+static func linea(a: Vector2i, b: Vector2i) -> Array[Vector2i]:
+	var puntos: Array[Vector2i] = []
+	var d := Vector2i(absi(b.x - a.x), -absi(b.y - a.y))
+	var s := Vector2i(1 if a.x < b.x else -1, 1 if a.y < b.y else -1)
+	var error := d.x + d.y
+	var actual := a
+	while true:
+		puntos.append(actual)
+		if actual == b:
+			break
+		var e2 := 2 * error
+		if e2 >= d.y:
+			error += d.y
+			actual.x += s.x
+		if e2 <= d.x:
+			error += d.x
+			actual.y += s.y
+	return puntos
 
 
 func casillas_de_tipo(tipo: Tipo) -> Array[Vector2i]:

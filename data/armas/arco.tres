@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="FichaArma" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/combate/ficha_arma.gd" id="1_arma"]
+
+[resource]
+script = ExtResource("1_arma")
+nombre = "Arco corto"
+dados = 1
+caras = 6
+alcance = 5
+atributo = 1
