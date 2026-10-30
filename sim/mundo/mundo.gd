@@ -134,6 +134,9 @@ func tick() -> void:
 			var defensor := c.objetivo
 			var r := Combate.resolver(c.combatiente, c.arma, defensor.combatiente, dados)
 			ataque_resuelto.emit(c, defensor, r)
+			# Quien da el golpe final se lleva la experiencia (solo el jugador progresa).
+			if not defensor.esta_vivo() and c.bando == Criatura.Bando.JUGADOR:
+				c.combatiente.ganar_experiencia(defensor.ficha.experiencia)
 
 
 func _perseguir(c: Criatura) -> void:

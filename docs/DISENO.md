@@ -135,7 +135,7 @@ Terminado cuando: puedes recorrer el mapa sin atravesar paredes ni ver errores d
 Terminado cuando: pelear contra 3 ratas es justo y entendible.
 
 ### Fase 3 — Progresión e inventario
-- [ ] Experiencia, niveles y puntos de atributo.
+- [x] Experiencia, niveles y puntos de atributo.
 - [ ] Inventario con peso, equipo en ranuras y botín por tablas.
 - [ ] Clases Guerrero y Mago con 3 habilidades cada una.
 
@@ -156,6 +156,19 @@ Terminado cuando: subir de nivel y cambiar de arma se nota en el combate.
 - [ ] Menú principal, guardar y cargar, opciones de sonido.
 - [ ] Música y efectos de sonido.
 - [ ] Prueba con 3 personas y lista de ajustes.
+
+### Fase 7 — Editor de contenido (ventana de administración)
+Objetivo: que el diseñador cree y cambie contenido sin programar, desde una ventana dentro del juego.
+- [ ] Biblioteca de sprites: importar imágenes propias (personajes, enemigos, objetos, iconos, tiles).
+- [ ] Editor de mapas: pintar suelo, muros, columnas y ambientes con bloques; colocar enemigos, NPCs y el inicio.
+- [ ] Editor de fichas: personajes, enemigos, objetos, armas y hechizos (atributos, sprite, botín, etc.).
+- [ ] Guardar todo como datos que el juego carga (y que después servirá el servidor).
+
+**Reglas desde ya para que el editor sea posible** (aplican a todas las fases):
+- Todo contenido vive en `data/` como datos (Resources o texto), nunca escrito dentro del código.
+- Lo visual de cada cosa sale de sus datos (p. ej. un campo `sprite` en la ficha); el dibujo por código
+  es solo el placeholder cuando no hay sprite.
+- Los formatos de datos deben ser fáciles de leer y escribir por una herramienta (no solo a mano).
 
 **Cómo pedir cada tarea a Claude Code:** una tarea por sesión, describir qué debe pasar al jugar (no cómo
 programarlo), pedir pruebas para la simulación y hacer commit al terminar cada tarea que funcione.

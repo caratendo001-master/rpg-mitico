@@ -26,6 +26,15 @@ Consecuencias prácticas:
   entregan a la simulación. Así después viajan por la red sin cambiar la lógica.
 - Los nodos de `view/` reaccionan a señales o leen el estado; no modifican el estado directamente.
 
+## Regla de contenido editable (pensando en el editor de la Fase 7)
+
+El usuario quiere, al final, una ventana de administración para agregar sus propios sprites, editar
+mapas con bloques y editar personajes, objetos, enemigos, ambientes e iconos. Por eso:
+- Nada de contenido escrito en código: criaturas, armas, objetos, hechizos, mapas y botín van en `data/`.
+- Lo visual se resuelve desde los datos (campo de sprite/icono en la ficha); el dibujo procedural
+  actual es solo el respaldo cuando el dato no tiene sprite.
+- Preferir formatos que una herramienta pueda leer y escribir (Resources `.tres`, JSON o texto simple).
+
 ## Estructura
 
 | Carpeta   | Contenido |
@@ -99,6 +108,11 @@ Consecuencias prácticas:
   `Combatiente` (vida/maná/defensa derivados de atributos D&D) y `Combate.resolver` (d20 + mod vs defensa;
   20 = crítico con dados dobles; 1 = fallo).
 - `sim/entidades/ia_criatura.gd`: PATRULLAR → PERSEGUIR → ATACAR → REGRESAR (correa), con vista + línea de vista.
+- Progresión en `Combatiente`: atributos propios (copiados de la ficha; nunca modificar la ficha compartida),
+  `ganar_experiencia` (curva `50·(n-1)·n`: 100, 300, 600...), 2 puntos de atributo por nivel, +vida/+maná
+  por nivel según la ficha, curación al subir. Morir quita 10% del tramo del nivel sin bajar de nivel.
+  La experiencia de un enemigo (`FichaCriatura.experiencia`) la gana el jugador que da el golpe final.
+- `ui/panel_personaje.gd` (tecla C): atributos y botones "+" para gastar puntos.
 - Equilibrio: `test_equilibrio_guerrero_contra_tres_ratas` simula 60 peleas; hoy ≈90% victorias
   perdiendo ≈13/34 de vida. Si se tocan fichas, revisar que siga en rango.
 - Vista: `view/entidades/criatura_vista.gd` (barra de vida, números de daño, anillo de objetivo, muerte)
@@ -109,3 +123,5 @@ Consecuencias prácticas:
 - Fase 0 (cimientos): completa.
 - Fase 1 (mundo y movimiento): completa y probada por el usuario.
 - Fase 2 (combate y enemigos): completa, pendiente de que el usuario la pruebe jugando.
+- Fase 3: experiencia, niveles y puntos de atributo listos. Faltan inventario/equipo/botín y clases
+  Guerrero y Mago con 3 habilidades cada una.

@@ -16,6 +16,7 @@ mana_base = 0
 defensa_base = 10
 regen_vida = 0
 arma = ExtResource("2_mordida")
+experiencia = 25
 velocidad = 3.0
 color = Color(0.48, 0.4, 0.33, 1)
 tamano = 0.55

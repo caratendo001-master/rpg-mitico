@@ -20,6 +20,13 @@ extends Resource
 @export var regen_vida := 0
 @export var arma: FichaArma
 
+@export_group("Progresión")
+## Experiencia que da al morir.
+@export var experiencia := 0
+## Vida y maná extra por cada nivel por encima del 1.
+@export var vida_por_nivel := 0
+@export var mana_por_nivel := 0
+
 @export_group("Movimiento")
 ## Casillas por segundo.
 @export var velocidad := 4.0

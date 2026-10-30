@@ -102,8 +102,7 @@ func test_20_natural_es_critico_y_dobla_dados() -> void:
 
 func test_1_natural_siempre_falla() -> void:
 	var g := Combatiente.new(_guerrero())
-	g.ficha = g.ficha.duplicate()
-	g.ficha.fuerza = 40 # bonificación enorme
+	g.fijar_atributo(Combatiente.Atributo.FUERZA, 40) # bonificación enorme
 	var r := Combatiente.new(_rata())
 	var dados := DadosFijos.new()
 	dados.valores = [1]

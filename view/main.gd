@@ -30,6 +30,8 @@ var _vistas := {} # Criatura -> CriaturaVista
 @onready var _info: Label = $Interfaz/Info
 @onready var _hud: Hud = $Interfaz/Hud
 
+var _panel := PanelPersonaje.new()
+
 
 func _ready() -> void:
 	mundo = Mundo.new(_mapa_vista.mapa)
@@ -39,6 +41,8 @@ func _ready() -> void:
 	mundo.poblar("r", FICHA_RATA)
 	_vistas[jugador].add_child(CamaraJuego.new())
 	_hud.jugador = jugador
+	_panel.jugador = jugador
+	$Interfaz.add_child(_panel)
 	_mapa_vista.casilla_senalada.connect(_al_senalar_casilla)
 
 
@@ -74,6 +78,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				jugador.arma = ARMAS[0]
 			KEY_2:
 				jugador.arma = ARMAS[1]
+			KEY_C:
+				_panel.alternar()
 			KEY_ESCAPE:
 				jugador.olvidar_objetivo()
 

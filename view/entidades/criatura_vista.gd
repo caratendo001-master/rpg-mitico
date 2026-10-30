@@ -34,6 +34,10 @@ func _ready() -> void:
 	criatura.combatiente.herido.connect(_al_ser_herido)
 	criatura.combatiente.esquivo.connect(func() -> void: _texto_flotante("falla", Color(0.8, 0.8, 0.8), 13))
 	criatura.combatiente.murio.connect(_al_morir)
+	criatura.combatiente.experiencia_ganada.connect(func(xp: int) -> void:
+		_texto_flotante("+%d XP" % xp, Color(0.95, 0.8, 0.3), 14))
+	criatura.combatiente.subio_nivel.connect(func(n: int) -> void:
+		_texto_flotante("¡Nivel %d!" % n, Color(1, 0.9, 0.2), 26, -30.0))
 	criatura.reaparecio.connect(_al_reaparecer)
 	position = _posicion_en_pantalla()
 
@@ -126,7 +130,7 @@ func _al_ser_herido(cantidad: int, critico: bool) -> void:
 
 
 ## Número o palabra que sube y se desvanece sobre la criatura.
-func _texto_flotante(texto: String, color: Color, tamano: int) -> void:
+func _texto_flotante(texto: String, color: Color, tamano: int, desfase_y := 0.0) -> void:
 	var etiqueta := Label.new()
 	etiqueta.text = texto
 	etiqueta.z_index = 200
@@ -135,7 +139,7 @@ func _texto_flotante(texto: String, color: Color, tamano: int) -> void:
 	etiqueta.add_theme_constant_override("outline_size", 4)
 	etiqueta.add_theme_font_size_override("font_size", tamano)
 	var alto := 60.0 if criatura.ficha.tamano >= 0.8 else 34.0
-	etiqueta.position = Vector2(-12 + randf_range(-6, 6), -alto - 18)
+	etiqueta.position = Vector2(-12 + randf_range(-6, 6), -alto - 18 + desfase_y)
 	add_child(etiqueta)
 	var t := etiqueta.create_tween().set_parallel()
 	t.tween_property(etiqueta, "position:y", etiqueta.position.y - 28, 0.9)
