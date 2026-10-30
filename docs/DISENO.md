@@ -112,7 +112,7 @@ No pasar a la siguiente fase hasta que la anterior cumpla su criterio de termina
 
 ### Fase 0 — Cimientos
 - [x] Instalar Godot 4 (4.7.2 en `GODOT/`), Git y Claude Code.
-- [ ] Crear repositorio en GitHub.
+- [x] Crear repositorio en GitHub (github.com/caratendo001-master/rpg-mitico).
 - [x] Proyecto base con estructura (sim/, view/, data/, ui/, assets/) y CLAUDE.md con las reglas de arquitectura.
 - [x] Pruebas automáticas para la simulación (gdUnit4).
 
