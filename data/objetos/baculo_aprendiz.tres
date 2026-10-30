@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="FichaObjeto" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://sim/objetos/ficha_objeto.gd" id="1_obj"]
+[ext_resource type="Resource" path="res://data/armas/baculo.tres" id="2_arma"]
+
+[resource]
+script = ExtResource("1_obj")
+nombre = "Báculo de aprendiz"
+descripcion = "Madera vieja con runas. Golpea poco, pero ayuda a concentrarse."
+color = Color(0.55, 0.4, 0.7, 1)
+peso = 2.0
+valor = 12
+ranura = 4
+inteligencia = 1
+arma = ExtResource("2_arma")

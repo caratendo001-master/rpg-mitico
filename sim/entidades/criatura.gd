@@ -28,8 +28,11 @@ var objetivo: Criatura:
 ## Si es true, camina solo hasta tener al objetivo a su alcance.
 var perseguir := false
 var ticks_muerto := 0
+## Segundos que faltan para poder usar cualquier habilidad (enfriamiento global).
+var enfriamiento_global := 0.0
 
 var _objetivo: WeakRef
+var _enfriamientos := {} # FichaHabilidad -> segundos restantes
 
 var casilla: Vector2i:
 	get: return personaje.casilla
@@ -79,6 +82,26 @@ func usar(indice: int) -> bool:
 	if objeto.es_equipable():
 		return equipo.equipar(inventario, indice)
 	return false
+
+
+var habilidades: Array[FichaHabilidad]:
+	get: return ficha.habilidades
+
+
+## Segundos que faltan para poder usar esta habilidad (el mayor entre el suyo y el global).
+func enfriamiento_de(habilidad: FichaHabilidad) -> float:
+	return maxf(_enfriamientos.get(habilidad, 0.0), enfriamiento_global)
+
+
+func iniciar_enfriamiento(habilidad: FichaHabilidad, global: float) -> void:
+	_enfriamientos[habilidad] = habilidad.enfriamiento
+	enfriamiento_global = global
+
+
+func avanzar_enfriamientos(segundos: float) -> void:
+	enfriamiento_global = maxf(0.0, enfriamiento_global - segundos)
+	for h in _enfriamientos:
+		_enfriamientos[h] = maxf(0.0, _enfriamientos[h] - segundos)
 
 
 ## Marca a otra criatura como objetivo y camina hacia ella hasta tenerla a su alcance.

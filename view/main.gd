@@ -17,8 +17,20 @@ const TECLAS_DIRECCION := {
 	KEY_D: Vector2i(1, 0), KEY_RIGHT: Vector2i(1, 0),
 }
 
-const FICHA_JUGADOR := preload("res://data/criaturas/guerrero.tres")
+## Clases que se pueden elegir al empezar.
+const CLASES: Array[FichaCriatura] = [
+	preload("res://data/criaturas/guerrero.tres"),
+	preload("res://data/criaturas/mago.tres"),
+]
 const FICHA_RATA := preload("res://data/criaturas/rata_gigante.tres")
+
+const MENSAJES_HABILIDAD := {
+	Mundo.ResultadoHabilidad.SIN_MANA: "Sin maná",
+	Mundo.ResultadoHabilidad.ENFRIANDO: "Aún no",
+	Mundo.ResultadoHabilidad.SIN_OBJETIVO: "Sin objetivo",
+	Mundo.ResultadoHabilidad.FUERA_DE_ALCANCE: "Muy lejos",
+	Mundo.ResultadoHabilidad.SIN_VISTA: "No lo ves",
+}
 
 var mundo: Mundo
 var jugador: Criatura
@@ -30,27 +42,61 @@ var _vistas_objetos := {} # Mundo.ObjetoSuelo -> ObjetoSueloVista
 @onready var _info: Label = $Interfaz/Info
 @onready var _hud: Hud = $Interfaz/Hud
 
-var _panel := PanelPersonaje.new()
-var _inventario := PanelInventario.new()
+# Se crean al elegir clase (antes no hay jugador que mostrar).
+var _panel: PanelPersonaje
+var _inventario: PanelInventario
+var _barra: BarraHabilidades
+var _selector := SelectorClase.new()
 
 
 func _ready() -> void:
 	mundo = Mundo.new(_mapa_vista.mapa)
 	mundo.criatura_agregada.connect(_crear_vista)
 	mundo.ataque_resuelto.connect(_al_resolver_ataque)
+	mundo.habilidad_usada.connect(_al_usar_habilidad)
 	mundo.objeto_en_suelo.connect(_al_aparecer_objeto)
 	mundo.objeto_retirado.connect(_al_retirar_objeto)
 	mundo.objeto_recogido.connect(_al_recoger_objeto)
-	jugador = mundo.crear_jugador(FICHA_JUGADOR)
 	mundo.poblar("r", FICHA_RATA)
+	_mapa_vista.casilla_senalada.connect(_al_senalar_casilla)
+	# El mundo no avanza hasta elegir clase.
+	_info.text = ""
+	_selector.clases = CLASES
+	_selector.elegida.connect(iniciar)
+	$Interfaz.add_child(_selector)
+
+
+## Crea al jugador con la clase elegida y arranca la partida.
+func iniciar(ficha: FichaCriatura) -> void:
+	_selector.queue_free()
+	jugador = mundo.crear_jugador(ficha)
 	_vistas[jugador].add_child(CamaraJuego.new())
 	_hud.jugador = jugador
+	_panel = PanelPersonaje.new()
 	_panel.jugador = jugador
+	_inventario = PanelInventario.new()
 	_inventario.jugador = jugador
 	_inventario.mundo = mundo
+	_barra = BarraHabilidades.new()
 	$Interfaz.add_child(_panel)
 	$Interfaz.add_child(_inventario)
-	_mapa_vista.casilla_senalada.connect(_al_senalar_casilla)
+	$Interfaz.add_child(_barra)
+	_barra.configurar(jugador)
+	_barra.usar.connect(usar_habilidad)
+
+
+## Usa una habilidad sobre el objetivo actual o, si no hay, sobre el enemigo bajo el ratón.
+func usar_habilidad(indice: int) -> void:
+	if jugador == null:
+		return
+	var blanco := jugador.objetivo
+	if blanco == null or not blanco.esta_vivo():
+		var bajo_raton := mundo.criatura_en(_mapa_vista.casilla_bajo_el_raton())
+		if bajo_raton and bajo_raton.bando == Criatura.Bando.ENEMIGO:
+			blanco = bajo_raton
+	var resultado := mundo.usar_habilidad(jugador, indice, blanco)
+	if MENSAJES_HABILIDAD.has(resultado):
+		_vistas[jugador].texto_flotante(MENSAJES_HABILIDAD[resultado], Color(0.75, 0.8, 1.0), 13, -12.0)
 
 
 func _crear_vista(criatura: Criatura) -> void:
@@ -60,6 +106,8 @@ func _crear_vista(criatura: Criatura) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if jugador == null:
+		return
 	if jugador.esta_vivo():
 		var direccion := _direccion_de_teclado()
 		if direccion != Vector2i.ZERO:
@@ -69,6 +117,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if jugador == null:
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if not jugador.esta_vivo():
 			return
@@ -81,6 +131,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			jugador.personaje.ir_a(casilla)
 	elif event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
+			KEY_1, KEY_2, KEY_3, KEY_4:
+				usar_habilidad(event.keycode - KEY_1)
 			KEY_I:
 				_inventario.alternar()
 			KEY_Q:
@@ -104,7 +156,9 @@ func _direccion_de_teclado() -> Vector2i:
 	return Vector2i(pantalla.x + pantalla.y, pantalla.y - pantalla.x).clamp(Vector2i(-1, -1), Vector2i(1, 1))
 
 
-func _al_resolver_ataque(atacante: Criatura, defensor: Criatura, _resultado: Combate.Resultado) -> void:
+func _al_resolver_ataque(atacante: Criatura, defensor: Criatura, resultado: Combate.Resultado) -> void:
+	if resultado.habilidad and not resultado.habilidad.usa_arma:
+		return # los hechizos se dibujan en _al_usar_habilidad
 	var desde: CriaturaVista = _vistas[atacante]
 	var hacia: CriaturaVista = _vistas[defensor]
 	if Mundo.distancia(atacante.casilla, defensor.casilla) > 1:
@@ -127,6 +181,23 @@ func _lanzar_flecha(desde: Vector2, hacia: Vector2) -> void:
 	t.tween_callback(flecha.queue_free)
 
 
+func _al_usar_habilidad(lanzador: Criatura, h: FichaHabilidad, centro: Vector2i, _afectados: Array[Criatura]) -> void:
+	var vista: CriaturaVista = _vistas[lanzador]
+	vista.texto_flotante(h.nombre, h.color.lightened(0.3), 13, -34.0)
+	var mundo_nodo := _mapa_vista.capa_mundo()
+	var destino := _mapa_vista.casilla_a_local(centro)
+	match h.forma:
+		FichaHabilidad.Forma.OBJETIVO, FichaHabilidad.Forma.AREA_OBJETIVO:
+			if h.usa_arma:
+				return
+			var al_llegar := Callable()
+			if h.forma == FichaHabilidad.Forma.AREA_OBJETIVO:
+				al_llegar = func() -> void: Efectos.onda(mundo_nodo, destino, h.radio, h.color)
+			Efectos.proyectil(mundo_nodo, vista.position + Vector2(0, -26), destino + Vector2(0, -16), h.color, al_llegar)
+		FichaHabilidad.Forma.AREA_PROPIA, FichaHabilidad.Forma.PROPIA:
+			Efectos.onda(mundo_nodo, vista.position, h.radio if h.forma == FichaHabilidad.Forma.AREA_PROPIA else 0, h.color)
+
+
 func _al_aparecer_objeto(o: Mundo.ObjetoSuelo) -> void:
 	var indice := mundo.objetos_en(o.casilla).size() - 1
 	var vista := ObjetoSueloVista.new(o, _mapa_vista.casilla_a_local(o.casilla), indice)
@@ -147,6 +218,8 @@ func _al_recoger_objeto(c: Criatura, objeto: FichaObjeto, cantidad: int) -> void
 
 
 func _al_senalar_casilla(casilla: Vector2i, tipo: Mapa.Tipo, transitable: bool) -> void:
+	if jugador == null:
+		return
 	var otra := mundo.criatura_en(casilla) if mundo else null
 	if otra and otra != jugador:
 		_info.text = "%s — vida %d / %d  (clic para atacar)" % [

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="FichaHabilidad" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/combate/ficha_habilidad.gd" id="1_hab"]
+
+[resource]
+script = ExtResource("1_hab")
+nombre = "Proyectil mágico"
+descripcion = "Un dardo de energía que nunca falla: 1d6 + Inteligencia."
+color = Color(0.6, 0.5, 1, 1)
+forma = 0
+costo_mana = 4
+enfriamiento = 0.0
+alcance = 6
+siempre_impacta = true
+dados = 1
+caras = 6
+atributo = 3

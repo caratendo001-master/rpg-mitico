@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FichaHabilidad" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/combate/ficha_habilidad.gd" id="1_hab"]
+
+[resource]
+script = ExtResource("1_hab")
+nombre = "Bola de fuego"
+descripcion = "Estalla sobre el objetivo y quema a todo lo que esté a su lado: 2d4 + Inteligencia."
+color = Color(1, 0.45, 0.15, 1)
+forma = 2
+costo_mana = 10
+enfriamiento = 15.0
+alcance = 6
+radio = 1
+siempre_impacta = true
+dados = 2
+caras = 4
+atributo = 3

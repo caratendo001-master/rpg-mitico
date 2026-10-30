@@ -24,6 +24,14 @@ func reiniciar() -> void:
 	_ticks_espera = 0
 
 
+## Alguien lo atacó (p. ej. desde lejos, fuera de su vista): deja de patrullar y va por él.
+## Si está regresando a casa por la correa, lo ignora.
+func provocar(yo: Criatura, atacante: Criatura) -> void:
+	if estado == Estado.PATRULLAR:
+		estado = Estado.PERSEGUIR
+		yo.atacar(atacante)
+
+
 func puede_ver(yo: Criatura, otra: Criatura, mundo: Mundo) -> bool:
 	if otra == null or not otra.esta_vivo():
 		return false

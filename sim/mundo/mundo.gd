@@ -9,6 +9,12 @@ signal ataque_resuelto(atacante: Criatura, defensor: Criatura, resultado: Combat
 signal objeto_en_suelo(objeto: ObjetoSuelo)
 signal objeto_retirado(objeto: ObjetoSuelo)
 signal objeto_recogido(criatura: Criatura, objeto: FichaObjeto, cantidad: int)
+signal habilidad_usada(lanzador: Criatura, habilidad: FichaHabilidad, centro: Vector2i, afectados: Array[Criatura])
+
+enum ResultadoHabilidad { OK, SIN_MANA, ENFRIANDO, SIN_OBJETIVO, FUERA_DE_ALCANCE, SIN_VISTA, NO_PUEDE }
+
+## Tras usar cualquier habilidad hay que esperar esto antes de usar otra.
+const ENFRIAMIENTO_GLOBAL := 1.0
 
 const DURACION_TICK := 1.0
 const TICKS_REAPARECER_JUGADOR := 3
@@ -174,8 +180,75 @@ func _al_morir_criatura(c: Criatura) -> void:
 			soltar_en(c.casilla, pila)
 
 
+## Usa la habilidad `indice` de la criatura. Con forma de objetivo usa `objetivo` o, si es null,
+## su objetivo actual. Se resuelve al instante (no espera al tick).
+func usar_habilidad(c: Criatura, indice: int, objetivo: Criatura = null) -> ResultadoHabilidad:
+	if not c.esta_vivo() or indice < 0 or indice >= c.habilidades.size():
+		return ResultadoHabilidad.NO_PUEDE
+	var h := c.habilidades[indice]
+	if c.enfriamiento_de(h) > 0.0:
+		return ResultadoHabilidad.ENFRIANDO
+	if c.combatiente.mana < h.costo_mana:
+		return ResultadoHabilidad.SIN_MANA
+	var centro := c.casilla
+	var afectados: Array[Criatura] = []
+	match h.forma:
+		FichaHabilidad.Forma.OBJETIVO, FichaHabilidad.Forma.AREA_OBJETIVO:
+			var blanco := objetivo if objetivo else c.objetivo
+			if blanco == null or not blanco.esta_vivo() or blanco.bando == c.bando:
+				return ResultadoHabilidad.SIN_OBJETIVO
+			var alcance := c.arma.alcance if h.usa_arma else h.alcance
+			var d := distancia(c.casilla, blanco.casilla)
+			if d > alcance:
+				return ResultadoHabilidad.FUERA_DE_ALCANCE
+			if d > 1 and not mapa.linea_de_vision(c.casilla, blanco.casilla):
+				return ResultadoHabilidad.SIN_VISTA
+			centro = blanco.casilla
+			afectados.append(blanco)
+			if h.forma == FichaHabilidad.Forma.AREA_OBJETIVO:
+				afectados.append_array(_enemigos_cerca(c, centro, h.radio, blanco))
+			if c.objetivo == null:
+				c.objetivo = blanco
+		FichaHabilidad.Forma.AREA_PROPIA:
+			afectados = _enemigos_cerca(c, centro, h.radio)
+			if afectados.is_empty():
+				return ResultadoHabilidad.SIN_OBJETIVO
+		FichaHabilidad.Forma.PROPIA:
+			afectados.append(c)
+	c.combatiente.mana -= h.costo_mana
+	c.iniciar_enfriamiento(h, ENFRIAMIENTO_GLOBAL)
+	if h.cura:
+		for a in afectados:
+			a.combatiente.curar(Combate.curacion(c.combatiente, h, dados))
+	else:
+		for a in afectados:
+			_golpear(c, a, Combate.resolver_habilidad(c.combatiente, c.arma, h, a.combatiente, dados))
+	habilidad_usada.emit(c, h, centro, afectados)
+	return ResultadoHabilidad.OK
+
+
+func _enemigos_cerca(c: Criatura, centro: Vector2i, radio: int, excepto: Criatura = null) -> Array[Criatura]:
+	var resultado: Array[Criatura] = []
+	for o in criaturas:
+		if o != excepto and o.esta_vivo() and o.bando != c.bando and distancia(o.casilla, centro) <= radio:
+			resultado.append(o)
+	return resultado
+
+
+## Consecuencias de un golpe: avisar, provocar al herido y dar experiencia si murió.
+func _golpear(atacante: Criatura, defensor: Criatura, r: Combate.Resultado) -> void:
+	ataque_resuelto.emit(atacante, defensor, r)
+	if not defensor.esta_vivo():
+		# Quien da el golpe final se lleva la experiencia (solo el jugador progresa).
+		if atacante.bando == Criatura.Bando.JUGADOR:
+			atacante.combatiente.ganar_experiencia(defensor.ficha.experiencia)
+	elif defensor.ia and atacante == jugador:
+		defensor.ia.provocar(defensor, atacante)
+
+
 func avanzar(segundos: float) -> void:
 	for c in criaturas:
+		c.avanzar_enfriamientos(segundos)
 		if c.esta_vivo():
 			_perseguir(c)
 			c.personaje.avanzar(segundos)
@@ -210,11 +283,7 @@ func tick() -> void:
 			c.olvidar_objetivo()
 		if c.objetivo and puede_atacar(c, c.objetivo):
 			var defensor := c.objetivo
-			var r := Combate.resolver(c.combatiente, c.arma, defensor.combatiente, dados)
-			ataque_resuelto.emit(c, defensor, r)
-			# Quien da el golpe final se lleva la experiencia (solo el jugador progresa).
-			if not defensor.esta_vivo() and c.bando == Criatura.Bando.JUGADOR:
-				c.combatiente.ganar_experiencia(defensor.ficha.experiencia)
+			_golpear(c, defensor, Combate.resolver(c.combatiente, c.arma, defensor.combatiente, dados))
 
 
 func _perseguir(c: Criatura) -> void:

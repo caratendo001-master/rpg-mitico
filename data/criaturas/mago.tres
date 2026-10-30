@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="FichaCriatura" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://sim/combate/ficha_criatura.gd" id="1_ficha"]
+[ext_resource type="Resource" path="res://data/armas/punos.tres" id="2_punos"]
+[ext_resource type="Script" path="res://sim/objetos/ficha_objeto.gd" id="3_objeto"]
+[ext_resource type="Resource" path="res://data/objetos/baculo_aprendiz.tres" id="4_baculo"]
+[ext_resource type="Resource" path="res://data/objetos/pocion_vida.tres" id="5_pocion"]
+[ext_resource type="Script" path="res://sim/combate/ficha_habilidad.gd" id="6_habilidad"]
+[ext_resource type="Resource" path="res://data/habilidades/proyectil_magico.tres" id="7_proyectil"]
+[ext_resource type="Resource" path="res://data/habilidades/bola_de_fuego.tres" id="8_bola"]
+[ext_resource type="Resource" path="res://data/habilidades/curar_heridas.tres" id="9_curar"]
+
+[resource]
+script = ExtResource("1_ficha")
+nombre = "Mago"
+descripcion = "Frágil pero letal a distancia. Ataca con hechizos que gastan maná: proyectiles que nunca fallan, bolas de fuego que queman a varios, y curación."
+fuerza = 8
+destreza = 14
+constitucion = 12
+inteligencia = 16
+sabiduria = 13
+vida_base = 20
+mana_base = 16
+defensa_base = 10
+regen_vida = 1
+arma = ExtResource("2_punos")
+equipo_inicial = Array[ExtResource("3_objeto")]([ExtResource("4_baculo")])
+inventario_inicial = Array[ExtResource("3_objeto")]([ExtResource("5_pocion"), ExtResource("5_pocion")])
+habilidades = Array[ExtResource("6_habilidad")]([ExtResource("7_proyectil"), ExtResource("8_bola"), ExtResource("9_curar")])
+experiencia = 0
+vida_por_nivel = 4
+mana_por_nivel = 5
+velocidad = 4.0
+color = Color(0.55, 0.3, 0.7, 1)
+tamano = 1.0

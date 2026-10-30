@@ -4,6 +4,8 @@ extends Resource
 ## para balancear sin tocar código.
 
 @export var nombre := "Criatura"
+## Texto para la pantalla de elegir clase.
+@export_multiline var descripcion := ""
 
 @export_group("Atributos")
 @export var fuerza := 10
@@ -28,6 +30,10 @@ extends Resource
 @export var inventario_inicial: Array[FichaObjeto] = []
 ## Lo que puede soltar al morir.
 @export var botin: TablaBotin
+
+@export_group("Habilidades")
+## Habilidades de la clase, en el orden de la barra (teclas 1, 2, 3...).
+@export var habilidades: Array[FichaHabilidad] = []
 
 @export_group("Progresión")
 ## Experiencia que da al morir.

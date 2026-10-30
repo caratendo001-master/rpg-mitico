@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="FichaHabilidad" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/combate/ficha_habilidad.gd" id="1_hab"]
+
+[resource]
+script = ExtResource("1_hab")
+nombre = "Segundo aliento"
+descripcion = "Recuperas 2d6 + Constitución de vida."
+color = Color(0.4, 0.85, 0.4, 1)
+forma = 3
+costo_mana = 3
+enfriamiento = 20.0
+dados = 2
+caras = 6
+atributo = 2
+cura = true

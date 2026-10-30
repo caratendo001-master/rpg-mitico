@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="FichaCriatura" load_steps=7 format=3]
+[gd_resource type="Resource" script_class="FichaCriatura" load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://sim/combate/ficha_criatura.gd" id="1_ficha"]
 [ext_resource type="Resource" path="res://data/armas/punos.tres" id="2_punos"]
@@ -6,10 +6,15 @@
 [ext_resource type="Resource" path="res://data/objetos/espada_corta.tres" id="4_espada"]
 [ext_resource type="Resource" path="res://data/objetos/arco_corto.tres" id="5_arco"]
 [ext_resource type="Resource" path="res://data/objetos/pocion_vida.tres" id="6_pocion"]
+[ext_resource type="Script" path="res://sim/combate/ficha_habilidad.gd" id="7_habilidad"]
+[ext_resource type="Resource" path="res://data/habilidades/golpe_poderoso.tres" id="8_golpe"]
+[ext_resource type="Resource" path="res://data/habilidades/torbellino.tres" id="9_torbellino"]
+[ext_resource type="Resource" path="res://data/habilidades/segundo_aliento.tres" id="10_aliento"]
 
 [resource]
 script = ExtResource("1_ficha")
 nombre = "Guerrero"
+descripcion = "Resistente y directo. Pelea cuerpo a cuerpo con espada; sus habilidades golpean más fuerte, a varios enemigos a la vez, o lo curan en apuros."
 fuerza = 14
 destreza = 12
 constitucion = 14
@@ -22,6 +27,7 @@ regen_vida = 1
 arma = ExtResource("2_punos")
 equipo_inicial = Array[ExtResource("3_objeto")]([ExtResource("4_espada")])
 inventario_inicial = Array[ExtResource("3_objeto")]([ExtResource("5_arco"), ExtResource("6_pocion"), ExtResource("6_pocion")])
+habilidades = Array[ExtResource("7_habilidad")]([ExtResource("8_golpe"), ExtResource("9_torbellino"), ExtResource("10_aliento")])
 experiencia = 0
 vida_por_nivel = 6
 mana_por_nivel = 2

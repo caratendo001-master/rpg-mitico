@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FichaHabilidad" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/combate/ficha_habilidad.gd" id="1_hab"]
+
+[resource]
+script = ExtResource("1_hab")
+nombre = "Golpe poderoso"
+descripcion = "Un ataque con el arma, más certero y con 1d8 de daño extra."
+color = Color(0.95, 0.55, 0.2, 1)
+forma = 0
+costo_mana = 3
+enfriamiento = 6.0
+alcance = 1
+usa_arma = true
+bonus_impacto = 2
+dados = 1
+caras = 8
+atributo = 0

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="FichaHabilidad" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/combate/ficha_habilidad.gd" id="1_hab"]
+
+[resource]
+script = ExtResource("1_hab")
+nombre = "Torbellino"
+descripcion = "Golpea con el arma a todos los enemigos que te rodean."
+color = Color(0.85, 0.85, 0.95, 1)
+forma = 1
+costo_mana = 4
+enfriamiento = 10.0
+radio = 1
+usa_arma = true
+atributo = 0

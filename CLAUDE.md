@@ -114,6 +114,22 @@ mapas con bloques y editar personajes, objetos, enemigos, ambientes e iconos. Po
   La experiencia de un enemigo (`FichaCriatura.experiencia`) la gana el jugador que da el golpe final.
 - `ui/panel_personaje.gd` (tecla C): atributos y botones "+" para gastar puntos.
 
+## Clases y habilidades
+
+- Una clase es una `FichaCriatura` jugable (`data/criaturas/guerrero.tres`, `mago.tres`) con su lista
+  `habilidades`. Las clases elegibles están en `view/main.gd` (`CLASES`); `ui/selector_clase.gd` las muestra.
+- `FichaHabilidad` (`data/habilidades/*.tres`): forma (OBJETIVO, AREA_PROPIA, AREA_OBJETIVO, PROPIA), costo de
+  maná, enfriamiento, alcance/radio, `usa_arma`, `siempre_impacta`, dados, atributo, `cura`.
+- `Mundo.usar_habilidad(criatura, indice, objetivo)` se resuelve al instante (no espera al tick) y devuelve un
+  `ResultadoHabilidad` (OK, SIN_MANA, ENFRIANDO, SIN_OBJETIVO, FUERA_DE_ALCANCE, SIN_VISTA). Enfriamiento
+  global de 1 s (`ENFRIAMIENTO_GLOBAL`) más el propio de cada habilidad, en segundos, en `Criatura`.
+- `Combate.resolver_habilidad` y `Combate.curacion`. Todo golpe pasa por `Mundo._golpear` (experiencia y
+  provocación: un enemigo atacado desde lejos deja de patrullar y persigue).
+- Equilibrio (pruebas en `test_habilidades.gd` y `test_mundo.gd`): contra 3 ratas, Guerrero con habilidades
+  ≈96% victorias perdiendo ≈27% de vida; Mago ≈78% perdiendo ≈45%; Guerrero sin habilidades ≈76%.
+- Vista: `ui/barra_habilidades.gd` (teclas 1-3, enfriamiento y maná), `view/efectos/efectos.gd`
+  (proyectil y onda), textos de nombre de habilidad y curación.
+
 ## Objetos, inventario y botín
 
 - `sim/objetos/`: `FichaObjeto` (Resource en `data/objetos/`: ranura de equipo, arma, defensa, bonos de
@@ -137,5 +153,4 @@ mapas con bloques y editar personajes, objetos, enemigos, ambientes e iconos. Po
 - Fase 0 (cimientos): completa.
 - Fase 1 (mundo y movimiento): completa y probada por el usuario.
 - Fase 2 (combate y enemigos): completa, pendiente de que el usuario la pruebe jugando.
-- Fase 3: experiencia/niveles e inventario/equipo/botín listos. Faltan las clases Guerrero y Mago
-  con 3 habilidades cada una.
+- Fase 3 (progresión e inventario): completa, pendiente de que el usuario la pruebe jugando.

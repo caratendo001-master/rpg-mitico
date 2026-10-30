@@ -46,6 +46,11 @@ func agregar_al_mundo(nodo: Node2D) -> void:
 	_mundo.add_child(nodo)
 
 
+## Nodo con y-sort donde viven criaturas, objetos y efectos.
+func capa_mundo() -> Node2D:
+	return _mundo
+
+
 func centro_del_mapa() -> Vector2:
 	return casilla_a_local(Vector2i(mapa.ancho / 2, mapa.alto / 2))
 

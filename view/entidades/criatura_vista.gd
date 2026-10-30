@@ -34,6 +34,10 @@ func _ready() -> void:
 	criatura.combatiente.herido.connect(_al_ser_herido)
 	criatura.combatiente.esquivo.connect(func() -> void: texto_flotante("falla", Color(0.8, 0.8, 0.8), 13))
 	criatura.combatiente.murio.connect(_al_morir)
+	# La regeneración de cada tick (+1) no se muestra; pociones y hechizos sí.
+	criatura.combatiente.curado.connect(func(cantidad: int) -> void:
+		if cantidad >= 3:
+			texto_flotante("+%d" % cantidad, Color(0.4, 1.0, 0.5), 16))
 	criatura.combatiente.experiencia_ganada.connect(func(xp: int) -> void:
 		texto_flotante("+%d XP" % xp, Color(0.95, 0.8, 0.3), 14))
 	criatura.combatiente.subio_nivel.connect(func(n: int) -> void:

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="FichaHabilidad" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/combate/ficha_habilidad.gd" id="1_hab"]
+
+[resource]
+script = ExtResource("1_hab")
+nombre = "Curar heridas"
+descripcion = "Recuperas 2d6 + Sabiduría de vida."
+color = Color(0.35, 0.9, 0.6, 1)
+forma = 3
+costo_mana = 6
+enfriamiento = 8.0
+dados = 2
+caras = 6
+atributo = 4
+cura = true
