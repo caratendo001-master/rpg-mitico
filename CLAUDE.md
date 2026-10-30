@@ -71,13 +71,21 @@ Consecuencias prácticas:
   (`puede_moverse`). Todo movimiento futuro (jugador, enemigos, A*) debe pasar por aquí.
 - Los mapas son texto en `data/mapas/*.txt`: `.` suelo, `#` muro, `O` columna, espacio = vacío.
   Al exportar, agregar `*.txt` a los filtros de recursos no-Godot del preset de exportación.
-- `view/mundo/mapa_vista.tscn` (`MapaVista`): dibuja el `Mapa` con dos `TileMapLayer`
-  (`Suelo` y `Bloques` con y-sort). No tiene colisiones físicas: las decide la simulación.
+- `sim/mundo/buscador_camino.gd` (`BuscadorCamino`): A* (`AStarGrid2D`) con las mismas reglas que
+  `Mapa.puede_moverse`; si el destino está bloqueado, llega lo más cerca posible.
+- `sim/entidades/personaje.gd` (`Personaje`): camina casilla a casilla con `ir_a()` (clic) o
+  `fijar_direccion()` (teclado, se desliza por muros en diagonal). El tiempo entra por
+  `avanzar(segundos)` desde `_physics_process`; ocupa la casilla destino al empezar cada paso.
+- `view/mundo/mapa_vista.tscn` (`MapaVista`): dibuja el `Mapa` con `Suelo` y, dentro del nodo `Mundo`
+  (y-sort), la capa `Bloques`. Todo lo que deba ordenarse en profundidad con muros y columnas
+  (personajes, objetos) se agrega con `agregar_al_mundo()` con su origen en los pies.
+- `view/entidades/personaje_vista.gd`: placeholder del personaje + contorno con `z_index` alto
+  para verlo cuando un muro lo tapa. `view/camara_juego.gd`: sigue al jugador, zoom por pasos.
+- `view/main.gd`: traduce entrada (clic, WASD/flechas en direcciones de pantalla) a acciones del `Personaje`.
 - `view/mundo/tiles_placeholder.gd`: TileSet isométrico 64×32 con texturas generadas por código;
   se reemplazará por pixel art real con las mismas fuentes/coordenadas de atlas.
 
 ## Estado
 
 - Fase 0 (cimientos): completa.
-- Fase 1: mapa de prueba con colisiones listo. Faltan jugador (clic A* + teclado), cámara con zoom
-  y orden de dibujado.
+- Fase 1 (mundo y movimiento): completa, pendiente de que el usuario la pruebe jugando.

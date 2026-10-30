@@ -9,4 +9,8 @@ script = ExtResource("1_mapa")
 
 [node name="Cursor" type="Node2D" parent="."]
 
-[node name="Bloques" type="TileMapLayer" parent="."]
+[node name="Mundo" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Bloques" type="TileMapLayer" parent="Mundo"]
+y_sort_enabled = true

@@ -11,7 +11,10 @@ var mapa: Mapa
 
 @onready var _suelo: TileMapLayer = $Suelo
 @onready var _cursor: Node2D = $Cursor
-@onready var _bloques: TileMapLayer = $Bloques
+## Capa con y-sort: muros, columnas y personajes se ordenan entre sí por su casilla,
+## así el jugador pasa por detrás de lo que está más cerca de la cámara.
+@onready var _mundo: Node2D = $Mundo
+@onready var _bloques: TileMapLayer = $Mundo/Bloques
 
 var _casilla_cursor := Vector2i(-1, -1)
 
@@ -21,7 +24,6 @@ func _ready() -> void:
 	var tileset := TilesPlaceholder.crear_tileset()
 	_suelo.tile_set = tileset
 	_bloques.tile_set = tileset
-	_bloques.y_sort_enabled = true
 	_pintar()
 	_cursor.draw.connect(_dibujar_cursor)
 
@@ -33,6 +35,15 @@ func casilla_a_local(c: Vector2i) -> Vector2:
 
 func local_a_casilla(p: Vector2) -> Vector2i:
 	return _suelo.local_to_map(p)
+
+
+func casilla_bajo_el_raton() -> Vector2i:
+	return local_a_casilla(get_local_mouse_position())
+
+
+## Agrega algo que debe ordenarse en profundidad con muros y columnas.
+func agregar_al_mundo(nodo: Node2D) -> void:
+	_mundo.add_child(nodo)
 
 
 func centro_del_mapa() -> Vector2:
@@ -59,7 +70,7 @@ func _pintar() -> void:
 
 
 func _process(_delta: float) -> void:
-	var c := local_a_casilla(get_local_mouse_position())
+	var c := casilla_bajo_el_raton()
 	if c != _casilla_cursor:
 		_casilla_cursor = c
 		_cursor.queue_redraw()

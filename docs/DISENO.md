@@ -120,9 +120,9 @@ Terminado cuando: el proyecto abre en Godot, corre una escena vacía y las prueb
 
 ### Fase 1 — Mundo y movimiento
 - [x] Mapa isométrico de prueba con TileMapLayer y colisiones (colisiones en `sim/mundo/mapa.gd`).
-- [ ] Jugador que camina por casillas con clic (A*) y teclado.
-- [ ] Cámara que sigue al jugador, con zoom.
-- [ ] Orden de dibujado correcto (el jugador pasa detrás de muros y columnas).
+- [x] Jugador que camina por casillas con clic (A*) y teclado.
+- [x] Cámara que sigue al jugador, con zoom.
+- [x] Orden de dibujado correcto (el jugador pasa detrás de muros y columnas).
 
 Terminado cuando: puedes recorrer el mapa sin atravesar paredes ni ver errores de orden visual.
 

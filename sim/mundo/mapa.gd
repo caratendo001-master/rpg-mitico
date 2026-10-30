@@ -4,15 +4,18 @@ extends RefCounted
 ## Es la fuente de verdad de las colisiones; la vista solo la dibuja.
 ## Formato de texto (una fila por línea):
 ##   '.' suelo   '#' muro   'O' columna   ' ' vacío (fuera del mapa jugable)
+##   'J' suelo donde aparece el jugador
 
 enum Tipo { VACIO, SUELO, MURO, COLUMNA }
 
 const SIMBOLOS := {
 	".": Tipo.SUELO,
+	"J": Tipo.SUELO,
 	"#": Tipo.MURO,
 	"O": Tipo.COLUMNA,
 	" ": Tipo.VACIO,
 }
+const SIMBOLO_INICIO := "J"
 
 const DIRECCIONES_8: Array[Vector2i] = [
 	Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
@@ -21,6 +24,8 @@ const DIRECCIONES_8: Array[Vector2i] = [
 
 var ancho: int = 0
 var alto: int = 0
+## Casilla donde aparece el jugador; (-1, -1) si el mapa no la define.
+var inicio := Vector2i(-1, -1)
 var _casillas := PackedByteArray()
 
 
@@ -49,6 +54,8 @@ static func desde_texto(texto: String) -> Mapa:
 			var simbolo := fila[x]
 			assert(SIMBOLOS.has(simbolo), "Símbolo de mapa desconocido: '%s'" % simbolo)
 			mapa.poner(Vector2i(x, y), SIMBOLOS.get(simbolo, Tipo.VACIO))
+			if simbolo == SIMBOLO_INICIO:
+				mapa.inicio = Vector2i(x, y)
 	return mapa
 
 
