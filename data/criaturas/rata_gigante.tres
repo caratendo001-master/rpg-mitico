@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="FichaCriatura" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="FichaCriatura" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://sim/combate/ficha_criatura.gd" id="1_ficha"]
 [ext_resource type="Resource" path="res://data/armas/mordida_rata.tres" id="2_mordida"]
+[ext_resource type="Resource" path="res://data/botin/rata_gigante.tres" id="3_botin"]
 
 [resource]
 script = ExtResource("1_ficha")
@@ -16,6 +17,7 @@ mana_base = 0
 defensa_base = 10
 regen_vida = 0
 arma = ExtResource("2_mordida")
+botin = ExtResource("3_botin")
 experiencia = 25
 velocidad = 3.0
 color = Color(0.48, 0.4, 0.33, 1)

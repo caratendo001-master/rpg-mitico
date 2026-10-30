@@ -1,16 +1,21 @@
 class_name Criatura
 extends RefCounted
-## Jugador o enemigo: une movimiento (`Personaje`), combate (`Combatiente`) y, si es
-## un enemigo, su inteligencia (`IaCriatura`). La crea y la hace funcionar `Mundo`.
+## Jugador o enemigo: une movimiento (`Personaje`), combate (`Combatiente`), objetos
+## (`Inventario` y `Equipo`) y, si es un enemigo, su inteligencia (`IaCriatura`).
+## La crea y la hace funcionar `Mundo`.
 
 enum Bando { JUGADOR, ENEMIGO }
 
+signal murio(criatura: Criatura)
 signal reaparecio
 
 var ficha: FichaCriatura
 var bando: Bando
 var combatiente: Combatiente
 var personaje: Personaje
+var inventario: Inventario
+var equipo: Equipo
+## Arma con la que ataca: la equipada o, si no hay, la natural de la ficha.
 var arma: FichaArma
 var ia: IaCriatura
 ## Casilla donde aparece y a la que regresa.
@@ -34,15 +39,46 @@ func _init(p_ficha: FichaCriatura, p_bando: Bando, mapa: Mapa, buscador: Buscado
 	ficha = p_ficha
 	bando = p_bando
 	origen = p_origen
-	arma = ficha.arma
 	combatiente = Combatiente.new(ficha)
 	personaje = Personaje.new(mapa, buscador, origen)
 	personaje.velocidad = ficha.velocidad
+	inventario = Inventario.new()
+	inventario.limite_peso = carga_maxima
+	equipo = Equipo.new()
+	combatiente.usar_equipo(equipo)
+	equipo.cambiado.connect(_actualizar_arma)
+	for o in ficha.equipo_inicial:
+		equipo.poner(o)
+	for o in ficha.inventario_inicial:
+		inventario.agregar(o)
+	_actualizar_arma()
+	combatiente.restaurar()
 	combatiente.murio.connect(_al_morir)
 
 
 func esta_vivo() -> bool:
 	return combatiente.esta_vivo()
+
+
+## Peso que puede cargar: crece con la fuerza.
+func carga_maxima() -> float:
+	return 40.0 + 4.0 * combatiente.atributo(Combatiente.Atributo.FUERZA)
+
+
+## Usa el objeto de una casilla del inventario: bebe un consumible o equipa un objeto.
+func usar(indice: int) -> bool:
+	var pila := inventario.casillas[indice]
+	if pila == null or not esta_vivo():
+		return false
+	var objeto := pila.objeto
+	if objeto.es_consumible():
+		combatiente.curar(objeto.cura_vida)
+		combatiente.mana = mini(combatiente.mana_max, combatiente.mana + objeto.cura_mana)
+		inventario.quitar(indice, 1)
+		return true
+	if objeto.es_equipable():
+		return equipo.equipar(inventario, indice)
+	return false
 
 
 ## Marca a otra criatura como objetivo y camina hacia ella hasta tenerla a su alcance.
@@ -66,7 +102,13 @@ func reaparecer() -> void:
 	reaparecio.emit()
 
 
+func _actualizar_arma() -> void:
+	var equipada := equipo.en(FichaObjeto.Ranura.ARMA)
+	arma = equipada.arma if equipada and equipada.arma else ficha.arma
+
+
 func _al_morir() -> void:
 	olvidar_objetivo()
 	personaje.detener()
 	ticks_muerto = 0
+	murio.emit(self)

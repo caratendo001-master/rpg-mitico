@@ -113,6 +113,20 @@ mapas con bloques y editar personajes, objetos, enemigos, ambientes e iconos. Po
   por nivel según la ficha, curación al subir. Morir quita 10% del tramo del nivel sin bajar de nivel.
   La experiencia de un enemigo (`FichaCriatura.experiencia`) la gana el jugador que da el golpe final.
 - `ui/panel_personaje.gd` (tecla C): atributos y botones "+" para gastar puntos.
+
+## Objetos, inventario y botín
+
+- `sim/objetos/`: `FichaObjeto` (Resource en `data/objetos/`: ranura de equipo, arma, defensa, bonos de
+  atributo, curación, peso, valor, `max_pila`, `icono` opcional), `Pila`, `Inventario` (20 casillas, límite
+  de peso = 40 + 4·fuerza), `Equipo` (una ranura por tipo; suma defensa y atributos a `Combatiente`),
+  `TablaBotin` + `EntradaBotin` (Resources en `data/botin/`).
+- `Criatura`: `inventario`, `equipo`, `usar(indice)` (bebe o equipa). `arma` = la equipada o la natural de la
+  ficha (`FichaCriatura.arma`, p. ej. puños). `FichaCriatura.equipo_inicial` / `inventario_inicial` / `botin`.
+- `Combatiente.atributo()` incluye el equipo; `atributo_base()` es lo propio (lo que suben los puntos).
+- `Mundo`: al morir un enemigo suelta su botín en su casilla (`ObjetoSuelo`, dura 120 ticks); el jugador
+  recoge lo que pisa al detenerse; lo que tira no lo recoge hasta alejarse.
+- Vista: `view/objetos/objeto_suelo_vista.gd`, `ui/panel_inventario.gd` (tecla I), `ui/boton_objeto.gd`,
+  `ui/iconos.gd` (usa `FichaObjeto.icono` si existe; si no, placeholder con color e inicial).
 - Equilibrio: `test_equilibrio_guerrero_contra_tres_ratas` simula 60 peleas; hoy ≈90% victorias
   perdiendo ≈13/34 de vida. Si se tocan fichas, revisar que siga en rango.
 - Vista: `view/entidades/criatura_vista.gd` (barra de vida, números de daño, anillo de objetivo, muerte)
@@ -123,5 +137,5 @@ mapas con bloques y editar personajes, objetos, enemigos, ambientes e iconos. Po
 - Fase 0 (cimientos): completa.
 - Fase 1 (mundo y movimiento): completa y probada por el usuario.
 - Fase 2 (combate y enemigos): completa, pendiente de que el usuario la pruebe jugando.
-- Fase 3: experiencia, niveles y puntos de atributo listos. Faltan inventario/equipo/botín y clases
-  Guerrero y Mago con 3 habilidades cada una.
+- Fase 3: experiencia/niveles e inventario/equipo/botín listos. Faltan las clases Guerrero y Mago
+  con 3 habilidades cada una.

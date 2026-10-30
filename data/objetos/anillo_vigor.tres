@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="FichaObjeto" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/objetos/ficha_objeto.gd" id="1_obj"]
+
+[resource]
+script = ExtResource("1_obj")
+nombre = "Anillo de vigor"
+descripcion = "Un aro de cobre tibio al tacto."
+color = Color(0.9, 0.65, 0.25, 1)
+peso = 0.1
+valor = 40
+ranura = 6
+constitucion = 2

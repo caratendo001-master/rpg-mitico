@@ -1,7 +1,11 @@
-[gd_resource type="Resource" script_class="FichaCriatura" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="FichaCriatura" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://sim/combate/ficha_criatura.gd" id="1_ficha"]
-[ext_resource type="Resource" path="res://data/armas/espada.tres" id="2_espada"]
+[ext_resource type="Resource" path="res://data/armas/punos.tres" id="2_punos"]
+[ext_resource type="Script" path="res://sim/objetos/ficha_objeto.gd" id="3_objeto"]
+[ext_resource type="Resource" path="res://data/objetos/espada_corta.tres" id="4_espada"]
+[ext_resource type="Resource" path="res://data/objetos/arco_corto.tres" id="5_arco"]
+[ext_resource type="Resource" path="res://data/objetos/pocion_vida.tres" id="6_pocion"]
 
 [resource]
 script = ExtResource("1_ficha")
@@ -15,7 +19,9 @@ vida_base = 30
 mana_base = 10
 defensa_base = 12
 regen_vida = 1
-arma = ExtResource("2_espada")
+arma = ExtResource("2_punos")
+equipo_inicial = Array[ExtResource("3_objeto")]([ExtResource("4_espada")])
+inventario_inicial = Array[ExtResource("3_objeto")]([ExtResource("5_arco"), ExtResource("6_pocion"), ExtResource("6_pocion")])
 experiencia = 0
 vida_por_nivel = 6
 mana_por_nivel = 2

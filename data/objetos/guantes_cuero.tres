@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="FichaObjeto" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/objetos/ficha_objeto.gd" id="1_obj"]
+
+[resource]
+script = ExtResource("1_obj")
+nombre = "Guantes de cuero"
+descripcion = "Mejor agarre del arma."
+color = Color(0.62, 0.45, 0.3, 1)
+peso = 0.5
+valor = 10
+ranura = 3
+fuerza = 1

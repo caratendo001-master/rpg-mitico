@@ -32,12 +32,12 @@ func _ready() -> void:
 		_silueta.draw.connect(_dibujar_silueta)
 		add_child(_silueta)
 	criatura.combatiente.herido.connect(_al_ser_herido)
-	criatura.combatiente.esquivo.connect(func() -> void: _texto_flotante("falla", Color(0.8, 0.8, 0.8), 13))
+	criatura.combatiente.esquivo.connect(func() -> void: texto_flotante("falla", Color(0.8, 0.8, 0.8), 13))
 	criatura.combatiente.murio.connect(_al_morir)
 	criatura.combatiente.experiencia_ganada.connect(func(xp: int) -> void:
-		_texto_flotante("+%d XP" % xp, Color(0.95, 0.8, 0.3), 14))
+		texto_flotante("+%d XP" % xp, Color(0.95, 0.8, 0.3), 14))
 	criatura.combatiente.subio_nivel.connect(func(n: int) -> void:
-		_texto_flotante("¡Nivel %d!" % n, Color(1, 0.9, 0.2), 26, -30.0))
+		texto_flotante("¡Nivel %d!" % n, Color(1, 0.9, 0.2), 26, -30.0))
 	criatura.reaparecio.connect(_al_reaparecer)
 	position = _posicion_en_pantalla()
 
@@ -124,13 +124,13 @@ func _dibujar_elipse(centro: Vector2, radios: Vector2, color: Color, relleno: bo
 
 func _al_ser_herido(cantidad: int, critico: bool) -> void:
 	var color := Color(1, 0.85, 0.2) if critico else Color(1, 0.3, 0.25)
-	_texto_flotante(("-%d!" if critico else "-%d") % cantidad, color, 20 if critico else 16)
+	texto_flotante(("-%d!" if critico else "-%d") % cantidad, color, 20 if critico else 16)
 	modulate = Color(1, 0.55, 0.55)
 	create_tween().tween_property(self, "modulate", Color.WHITE, 0.25)
 
 
 ## Número o palabra que sube y se desvanece sobre la criatura.
-func _texto_flotante(texto: String, color: Color, tamano: int, desfase_y := 0.0) -> void:
+func texto_flotante(texto: String, color: Color, tamano: int, desfase_y := 0.0) -> void:
 	var etiqueta := Label.new()
 	etiqueta.text = texto
 	etiqueta.z_index = 200

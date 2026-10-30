@@ -18,7 +18,16 @@ extends Resource
 @export var defensa_base := 10
 ## Vida que recupera en cada tick.
 @export var regen_vida := 0
+## Ataque sin arma equipada (puños, mordida...).
 @export var arma: FichaArma
+
+@export_group("Objetos")
+## Lo que lleva puesto al aparecer.
+@export var equipo_inicial: Array[FichaObjeto] = []
+## Lo que lleva en el inventario al aparecer (repetir un objeto para dar varios).
+@export var inventario_inicial: Array[FichaObjeto] = []
+## Lo que puede soltar al morir.
+@export var botin: TablaBotin
 
 @export_group("Progresión")
 ## Experiencia que da al morir.

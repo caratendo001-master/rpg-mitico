@@ -136,7 +136,7 @@ Terminado cuando: pelear contra 3 ratas es justo y entendible.
 
 ### Fase 3 — Progresión e inventario
 - [x] Experiencia, niveles y puntos de atributo.
-- [ ] Inventario con peso, equipo en ranuras y botín por tablas.
+- [x] Inventario con peso, equipo en ranuras y botín por tablas.
 - [ ] Clases Guerrero y Mago con 3 habilidades cada una.
 
 Terminado cuando: subir de nivel y cambiar de arma se nota en el combate.

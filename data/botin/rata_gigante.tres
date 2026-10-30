@@ -1,0 +1,72 @@
+[gd_resource type="Resource" script_class="TablaBotin" load_steps=20 format=3]
+
+[ext_resource type="Script" path="res://sim/objetos/tabla_botin.gd" id="1_tabla"]
+[ext_resource type="Script" path="res://sim/objetos/entrada_botin.gd" id="2_entrada"]
+[ext_resource type="Resource" path="res://data/objetos/cola_rata.tres" id="3_cola"]
+[ext_resource type="Resource" path="res://data/objetos/moneda_oro.tres" id="4_oro"]
+[ext_resource type="Resource" path="res://data/objetos/pocion_vida.tres" id="5_pocion"]
+[ext_resource type="Resource" path="res://data/objetos/casco_cuero.tres" id="6_casco"]
+[ext_resource type="Resource" path="res://data/objetos/guantes_cuero.tres" id="7_guantes"]
+[ext_resource type="Resource" path="res://data/objetos/escudo_madera.tres" id="8_escudo"]
+[ext_resource type="Resource" path="res://data/objetos/armadura_cuero.tres" id="9_armadura"]
+[ext_resource type="Resource" path="res://data/objetos/anillo_vigor.tres" id="10_anillo"]
+
+[sub_resource type="Resource" id="e_cola"]
+script = ExtResource("2_entrada")
+objeto = ExtResource("3_cola")
+probabilidad = 0.6
+cantidad_min = 1
+cantidad_max = 1
+
+[sub_resource type="Resource" id="e_oro"]
+script = ExtResource("2_entrada")
+objeto = ExtResource("4_oro")
+probabilidad = 0.8
+cantidad_min = 1
+cantidad_max = 6
+
+[sub_resource type="Resource" id="e_pocion"]
+script = ExtResource("2_entrada")
+objeto = ExtResource("5_pocion")
+probabilidad = 0.15
+cantidad_min = 1
+cantidad_max = 1
+
+[sub_resource type="Resource" id="e_casco"]
+script = ExtResource("2_entrada")
+objeto = ExtResource("6_casco")
+probabilidad = 0.06
+cantidad_min = 1
+cantidad_max = 1
+
+[sub_resource type="Resource" id="e_guantes"]
+script = ExtResource("2_entrada")
+objeto = ExtResource("7_guantes")
+probabilidad = 0.05
+cantidad_min = 1
+cantidad_max = 1
+
+[sub_resource type="Resource" id="e_escudo"]
+script = ExtResource("2_entrada")
+objeto = ExtResource("8_escudo")
+probabilidad = 0.05
+cantidad_min = 1
+cantidad_max = 1
+
+[sub_resource type="Resource" id="e_armadura"]
+script = ExtResource("2_entrada")
+objeto = ExtResource("9_armadura")
+probabilidad = 0.03
+cantidad_min = 1
+cantidad_max = 1
+
+[sub_resource type="Resource" id="e_anillo"]
+script = ExtResource("2_entrada")
+objeto = ExtResource("10_anillo")
+probabilidad = 0.02
+cantidad_min = 1
+cantidad_max = 1
+
+[resource]
+script = ExtResource("1_tabla")
+entradas = Array[ExtResource("2_entrada")]([SubResource("e_cola"), SubResource("e_oro"), SubResource("e_pocion"), SubResource("e_casco"), SubResource("e_guantes"), SubResource("e_escudo"), SubResource("e_armadura"), SubResource("e_anillo")])

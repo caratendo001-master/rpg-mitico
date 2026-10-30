@@ -26,6 +26,8 @@ var nivel := 1
 ## Experiencia total acumulada.
 var experiencia := 0
 var puntos_atributo := 0
+## Opcional: el equipo puesto suma defensa y atributos.
+var equipo: Equipo
 
 var _atributos: Array[int] = []
 
@@ -35,7 +37,7 @@ var mana_max: int:
 	get: return maxi(0, ficha.mana_base + 2 * modificador(Atributo.INTELIGENCIA) + (nivel - 1) * ficha.mana_por_nivel)
 ## Destreza mejora la defensa (esquiva).
 var defensa: int:
-	get: return ficha.defensa_base + modificador(Atributo.DESTREZA)
+	get: return ficha.defensa_base + modificador(Atributo.DESTREZA) + (equipo.defensa() if equipo else 0)
 
 
 func _init(p_ficha: FichaCriatura) -> void:
@@ -49,7 +51,13 @@ static func experiencia_para_nivel(n: int) -> int:
 	return 50 * (n - 1) * n
 
 
+## Valor total del atributo: el propio más lo que sume el equipo.
 func atributo(a: Atributo) -> int:
+	return _atributos[a] + (equipo.bonus_atributo(a) if equipo else 0)
+
+
+## Valor propio, sin equipo (el que suben los puntos de atributo).
+func atributo_base(a: Atributo) -> int:
 	return _atributos[a]
 
 
@@ -58,7 +66,18 @@ func fijar_atributo(a: Atributo, valor: int) -> void:
 
 
 func modificador(a: Atributo) -> int:
-	return FichaCriatura.modificador(_atributos[a])
+	return FichaCriatura.modificador(atributo(a))
+
+
+func usar_equipo(p_equipo: Equipo) -> void:
+	equipo = p_equipo
+	equipo.cambiado.connect(_ajustar_a_maximos)
+
+
+## Quitarse equipo puede bajar los máximos: la vida y el maná actuales no pueden pasarse.
+func _ajustar_a_maximos() -> void:
+	vida = mini(vida, vida_max)
+	mana = mini(mana, mana_max)
 
 
 func restaurar() -> void:

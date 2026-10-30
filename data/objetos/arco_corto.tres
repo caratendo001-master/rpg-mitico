@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FichaObjeto" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://sim/objetos/ficha_objeto.gd" id="1_obj"]
+[ext_resource type="Resource" path="res://data/armas/arco.tres" id="2_arma"]
+
+[resource]
+script = ExtResource("1_obj")
+nombre = "Arco corto"
+descripcion = "Ataca a distancia con línea de vista."
+color = Color(0.6, 0.42, 0.22, 1)
+peso = 2.0
+valor = 20
+ranura = 4
+arma = ExtResource("2_arma")

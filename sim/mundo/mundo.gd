@@ -6,15 +6,30 @@ extends RefCounted
 
 signal criatura_agregada(criatura: Criatura)
 signal ataque_resuelto(atacante: Criatura, defensor: Criatura, resultado: Combate.Resultado)
+signal objeto_en_suelo(objeto: ObjetoSuelo)
+signal objeto_retirado(objeto: ObjetoSuelo)
+signal objeto_recogido(criatura: Criatura, objeto: FichaObjeto, cantidad: int)
 
 const DURACION_TICK := 1.0
 const TICKS_REAPARECER_JUGADOR := 3
 const TICKS_REAPARECER_ENEMIGO := 30
+## Lo que queda tirado desaparece tras este tiempo.
+const TICKS_OBJETO_EN_SUELO := 120
+
+
+## Objetos tirados en una casilla.
+class ObjetoSuelo:
+	var casilla: Vector2i
+	var pila: Pila
+	var ticks_restantes: int
+	## false si el jugador lo acaba de tirar: no se recoge solo hasta que se aleje.
+	var recogible := true
 
 var mapa: Mapa
 var buscador: BuscadorCamino
 var dados: Dados
 var criaturas: Array[Criatura] = []
+var objetos_suelo: Array[ObjetoSuelo] = []
 var jugador: Criatura
 var tick_actual := 0
 
@@ -55,6 +70,7 @@ func _crear(ficha: FichaCriatura, bando: Criatura.Bando, casilla: Vector2i) -> C
 	var c := Criatura.new(ficha, bando, mapa, buscador, casilla)
 	# Callable a un método (no lambda) para no crear un ciclo de referencias Mundo ↔ Personaje.
 	c.personaje.esta_ocupada = _ocupada_para
+	c.murio.connect(_al_morir_criatura)
 	criaturas.append(c)
 	criatura_agregada.emit(c)
 	return c
@@ -107,11 +123,69 @@ func acercar(c: Criatura, hacia: Criatura) -> void:
 	c.personaje.seguir_ruta(recorte)
 
 
+func objetos_en(casilla: Vector2i) -> Array[ObjetoSuelo]:
+	var resultado: Array[ObjetoSuelo] = []
+	for o in objetos_suelo:
+		if o.casilla == casilla:
+			resultado.append(o)
+	return resultado
+
+
+func soltar_en(casilla: Vector2i, pila: Pila) -> ObjetoSuelo:
+	var o := ObjetoSuelo.new()
+	o.casilla = casilla
+	o.pila = pila
+	o.ticks_restantes = TICKS_OBJETO_EN_SUELO
+	objetos_suelo.append(o)
+	objeto_en_suelo.emit(o)
+	return o
+
+
+## Tira al suelo, en su casilla, lo que la criatura tenga en una casilla del inventario.
+func tirar_del_inventario(c: Criatura, indice: int) -> void:
+	var pila := c.inventario.quitar(indice)
+	if pila:
+		soltar_en(c.casilla, pila).recogible = false
+
+
+## Recoge todo lo que quepa de la casilla donde está la criatura.
+func recoger(c: Criatura) -> void:
+	for o in objetos_en(c.casilla):
+		if not o.recogible:
+			continue
+		var no_cupo := c.inventario.agregar(o.pila.objeto, o.pila.cantidad)
+		var recogidos := o.pila.cantidad - no_cupo
+		if recogidos == 0:
+			continue
+		objeto_recogido.emit(c, o.pila.objeto, recogidos)
+		o.pila.cantidad = no_cupo
+		if no_cupo == 0:
+			_retirar(o)
+
+
+func _retirar(o: ObjetoSuelo) -> void:
+	objetos_suelo.erase(o)
+	objeto_retirado.emit(o)
+
+
+func _al_morir_criatura(c: Criatura) -> void:
+	if c.bando == Criatura.Bando.ENEMIGO and c.ficha.botin:
+		for pila in c.ficha.botin.tirar(dados):
+			soltar_en(c.casilla, pila)
+
+
 func avanzar(segundos: float) -> void:
 	for c in criaturas:
 		if c.esta_vivo():
 			_perseguir(c)
 			c.personaje.avanzar(segundos)
+	# El jugador recoge lo que pisa al detenerse sobre ello.
+	if jugador and jugador.esta_vivo():
+		for o in objetos_suelo:
+			if not o.recogible and o.casilla != jugador.casilla:
+				o.recogible = true
+		if not jugador.personaje.esta_caminando() and not objetos_en(jugador.casilla).is_empty():
+			recoger(jugador)
 	_acumulado += segundos
 	while _acumulado >= DURACION_TICK:
 		_acumulado -= DURACION_TICK
@@ -120,6 +194,10 @@ func avanzar(segundos: float) -> void:
 
 func tick() -> void:
 	tick_actual += 1
+	for o in objetos_suelo.duplicate():
+		o.ticks_restantes -= 1
+		if o.ticks_restantes <= 0:
+			_retirar(o)
 	for c in criaturas:
 		if not c.esta_vivo():
 			_contar_reaparicion(c)

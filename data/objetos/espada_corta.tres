@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FichaObjeto" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://sim/objetos/ficha_objeto.gd" id="1_obj"]
+[ext_resource type="Resource" path="res://data/armas/espada.tres" id="2_arma"]
+
+[resource]
+script = ExtResource("1_obj")
+nombre = "Espada corta"
+descripcion = "Acero sencillo pero confiable."
+color = Color(0.75, 0.78, 0.82, 1)
+peso = 3.0
+valor = 15
+ranura = 4
+arma = ExtResource("2_arma")

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="FichaObjeto" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/objetos/ficha_objeto.gd" id="1_obj"]
+
+[resource]
+script = ExtResource("1_obj")
+nombre = "Moneda de oro"
+color = Color(1, 0.85, 0.2, 1)
+peso = 0.01
+valor = 1
+max_pila = 1000
