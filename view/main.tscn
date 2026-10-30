@@ -1,10 +1,20 @@
-[gd_scene format=3]
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://view/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://view/mundo/mapa_vista.tscn" id="2_mapa"]
 
 [node name="Main" type="Node2D"]
+script = ExtResource("1_main")
 
-[node name="Titulo" type="Label" parent="."]
-offset_left = 40.0
-offset_top = 40.0
-offset_right = 640.0
-offset_bottom = 100.0
-text = "RPG Mítico — escena vacía (Fase 0)"
+[node name="MapaVista" parent="." instance=ExtResource("2_mapa")]
+
+[node name="Camara" type="Camera2D" parent="."]
+
+[node name="Interfaz" type="CanvasLayer" parent="."]
+
+[node name="Info" type="Label" parent="Interfaz"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 700.0
+offset_bottom = 40.0
+text = "Pasa el ratón sobre el mapa: verde = se puede pisar, rojo = bloquea"

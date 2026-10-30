@@ -64,6 +64,20 @@ Consecuencias prácticas:
 - Avanzar por las fases de `docs/DISENO.md`; no saltar de fase sin cumplir su criterio de terminado.
 - Una tarea por sesión; commit al terminar cada tarea que funcione.
 
+## Mundo y mapas
+
+- `sim/mundo/mapa.gd` (`Mapa`): cuadrícula lógica y **fuente de verdad de las colisiones**.
+  Solo el suelo es transitable; pasos de 1 casilla en 8 direcciones, sin cortar esquinas en diagonal
+  (`puede_moverse`). Todo movimiento futuro (jugador, enemigos, A*) debe pasar por aquí.
+- Los mapas son texto en `data/mapas/*.txt`: `.` suelo, `#` muro, `O` columna, espacio = vacío.
+  Al exportar, agregar `*.txt` a los filtros de recursos no-Godot del preset de exportación.
+- `view/mundo/mapa_vista.tscn` (`MapaVista`): dibuja el `Mapa` con dos `TileMapLayer`
+  (`Suelo` y `Bloques` con y-sort). No tiene colisiones físicas: las decide la simulación.
+- `view/mundo/tiles_placeholder.gd`: TileSet isométrico 64×32 con texturas generadas por código;
+  se reemplazará por pixel art real con las mismas fuentes/coordenadas de atlas.
+
 ## Estado
 
-- Fase 0 (cimientos): estructura, CLAUDE.md, gdUnit4 con prueba de ejemplo (`test/sim/test_dados.gd`).
+- Fase 0 (cimientos): completa.
+- Fase 1: mapa de prueba con colisiones listo. Faltan jugador (clic A* + teclado), cámara con zoom
+  y orden de dibujado.

@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://view/mundo/mapa_vista.gd" id="1_mapa"]
+
+[node name="MapaVista" type="Node2D"]
+script = ExtResource("1_mapa")
+
+[node name="Suelo" type="TileMapLayer" parent="."]
+
+[node name="Cursor" type="Node2D" parent="."]
+
+[node name="Bloques" type="TileMapLayer" parent="."]
