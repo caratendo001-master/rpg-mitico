@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[node name="Main" type="Node2D"]
+
+[node name="Titulo" type="Label" parent="."]
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 640.0
+offset_bottom = 100.0
+text = "RPG Mítico — escena vacía (Fase 0)"

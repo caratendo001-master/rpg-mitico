@@ -1,0 +1,33 @@
+# Godot 4
+.godot/
+/android/
+*.translation
+export.cfg
+export_credentials.cfg
+
+# Imported/temporary files
+*.tmp
+*.import.tmp
+
+# Mono / C# (por si se usa después)
+.mono/
+data_*/
+mono_crash.*.json
+
+# Resultados de pruebas gdUnit4
+reports/
+addons/gdUnit4/GdUnitRunner.cfg
+
+# Ejecutables del motor (se descargan aparte, no se versionan)
+/GODOT/
+
+# Builds exportados
+Ejecutable/*
+!Ejecutable/.gitkeep
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
